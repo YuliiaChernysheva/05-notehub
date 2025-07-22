@@ -1,4 +1,3 @@
-// import { DebouncedState } from "use-debounce";
 import css from "./SearchBox.module.css";
 
 interface SearchBoxProps {
@@ -14,7 +13,7 @@ export default function SearchBox({ value, onSearch }: SearchBoxProps) {
   return (
     <input
       className={css.input}
-      defaultValue={value}
+      value={value}
       onChange={handleChange}
       type="text"
       placeholder="Search notes"

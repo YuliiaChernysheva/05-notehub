@@ -17,20 +17,23 @@ export interface NotesResponse {
 }
 
 type GetNotesParams = {
-  search: string;
+  search?: string;
   page?: number;
   perPage?: number;
 };
 
 export const getNotes = async ({
-  search,
+  search = "",
   page = 1,
+  perPage = 12,
 }: GetNotesParams): Promise<NotesResponse> => {
+  const realSearch = search.trim() === "" ? "a" : search;
+
   const response = await axiosInstance.get<NotesResponse>("/notes", {
     params: {
-      search: search,
+      search: realSearch,
       page,
-      perPage: 12,
+      perPage,
     },
   });
 

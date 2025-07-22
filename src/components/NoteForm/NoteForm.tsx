@@ -4,6 +4,7 @@ import css from "./NoteForm.module.css";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { addNote } from "../../services/noteService";
 import type { NewNoteData, NoteTag } from "../../types/note";
+import type { NotesResponse } from "../../services/noteService";
 
 interface NoteFormProps {
   onClose: () => void;
@@ -11,9 +12,9 @@ interface NoteFormProps {
 
 const validationSchema = Yup.object({
   title: Yup.string()
-    .min(3, "Minimum 3 characters")
+    .min(3, "Title must be at least 3 characters")
     .max(50, "Maximum 50 characters")
-    .required("Required"),
+    .required("Title is required"),
   content: Yup.string().max(500, "Maximum 500 characters"),
   tag: Yup.mixed<NoteTag>()
     .oneOf(["Todo", "Work", "Personal", "Meeting", "Shopping"])
@@ -25,8 +26,16 @@ export default function NoteForm({ onClose }: NoteFormProps) {
 
   const { mutate, isPending } = useMutation({
     mutationFn: (newNote: NewNoteData) => addNote(newNote),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notes"] });
+    onSuccess: (createdNote) => {
+      queryClient.setQueryData<NotesResponse>(["notes", 1, ""], (oldData) => {
+        if (!oldData) return oldData;
+
+        return {
+          ...oldData,
+          notes: [createdNote, ...oldData.notes],
+        };
+      });
+
       onClose();
     },
   });
