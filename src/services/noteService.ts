@@ -4,8 +4,6 @@ import type { Note, NewNoteData, NoteUpdateData } from "../types/note";
 const myToken = import.meta.env.VITE_NOTEHUB_TOKEN;
 const BASE_URL = "https://notehub-public.goit.study/api";
 
-console.log("TOKEN", myToken);
-
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
   headers: {
